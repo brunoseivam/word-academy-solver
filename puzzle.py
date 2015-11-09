@@ -40,7 +40,8 @@ class Puzzle:
     EMPTY='.'
 
     def __init__(self, puzzle, side=None, coordLUT=None, distLUT=None):
-        size = len(puzzle)
+
+        size = side*side if side else len(puzzle)
 
         if not side and int(math.sqrt(size) + 0.5)**2 != size:
             raise("Invalid non-square puzzle")
