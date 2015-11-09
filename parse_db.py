@@ -11,5 +11,5 @@ if __name__ == '__main__':
     print "Creating Trie from", args.input
     trie = puzzle.Trie(args.input)
     print "Serializing to", args.output
-    pickle.dump(trie.root, open(args.output, "wb"))
+    pickle.dump(trie.root, open(args.output, "wb"), pickle.HIGHEST_PROTOCOL)
     print "Done"
