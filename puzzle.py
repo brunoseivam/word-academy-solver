@@ -50,6 +50,7 @@ class Puzzle:
         self.valid  = set(i for i, letter in enumerate(self.puzzle) if letter != self.EMPTY)
         self.path   = []
         self.recalcChoices()
+        self.coord  = [(i/self.side,i%self.side) for i in xrange(size)]
 
     def __repr__(self):
         return "\n".join(self.puzzle[i:i+self.side] for i in range(0, self.side**2, self.side))
@@ -57,12 +58,9 @@ class Puzzle:
     def position(self, row, col):
         return row*self.side + col
 
-    def coords(self, p):
-        return (p / self.side, p % self.side) # (row, col)
-
     def distance(self, p1, p2):
-        c1 = self.coords(p1)
-        c2 = self.coords(p2)
+        c1 = self.coord[p1]
+        c2 = self.coord[p2]
         return max((abs(c1[0]-c2[0]),abs(c1[1]-c2[1])))
 
     def recalcChoices(self):
@@ -81,7 +79,7 @@ class Puzzle:
             puzzle[p] = self.EMPTY
 
         # Mark all path tiles as invalid and convert to reverse sorted coordinates
-        valid = [self.coords(p) for p in sorted(self.valid-set(self.path), reverse=True)]
+        valid = [self.coord[p] for p in sorted(self.valid-set(self.path), reverse=True)]
 
         for row, col in valid:
             offset = sum((rowBelow,col) not in valid for rowBelow in xrange(row+1, self.side))
