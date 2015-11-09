@@ -2,16 +2,20 @@
 
 import math, time, sys
 from collections import deque
+import cPickle as pickle
 
 class Trie:
     END='_end'
 
-    def __init__(self, filename=None):
+    def __init__(self, filename=None, pickled=False):
         self.root = dict()
 
         if filename:
             with open(filename) as db:
-                self.add([word.strip() for word in db])
+                if pickled:
+                    self.root = pickle.load(db)
+                else:
+                    self.add([word.strip() for word in db])
 
     def add(self, words):
         for word in words:
