@@ -39,21 +39,21 @@ class Trie:
 class Puzzle:
     EMPTY='.'
 
-    def __init__(self, puzzle):
+    def __init__(self, puzzle, side=None, coordLUT=None, distLUT=None):
         size = len(puzzle)
 
-        if int(math.sqrt(size) + 0.5)**2 != size:
+        if not side and int(math.sqrt(size) + 0.5)**2 != size:
             raise("Invalid non-square puzzle")
 
-        self.side   = int(math.sqrt(size))
+        self.side   = side if side else int(math.sqrt(size))
         self.puzzle = puzzle.lower()
         self.valid  = set(i for i, letter in enumerate(self.puzzle) if letter != self.EMPTY)
         self.path   = []
         self.recalcChoices()
 
         # Lookup Tables
-        self.coord  = [(i/self.side,i%self.side) for i in xrange(size)]
-        self.dist   = [[max((abs(ax-bx),abs(ay-by))) for ax, ay in self.coord] for bx, by in self.coord]
+        self.coord  = coordLUT if coordLUT else [(i/self.side,i%self.side) for i in xrange(size)]
+        self.dist   = distLUT if distLUT else [[max((abs(ax-bx),abs(ay-by))) for ax, ay in self.coord] for bx, by in self.coord]
 
     def __repr__(self):
         return "\n".join(self.puzzle[i:i+self.side] for i in range(0, self.side**2, self.side))
@@ -85,7 +85,7 @@ class Puzzle:
             newPos = self.position(row+offset, col)
             puzzle[oldPos], puzzle[newPos] = puzzle[newPos], puzzle[oldPos]
 
-        return Puzzle("".join(puzzle))
+        return Puzzle("".join(puzzle), self.side, self.coord, self.dist)
 
     def solve(self, trie, wordLen):
         self.solutions = []
@@ -110,9 +110,9 @@ if __name__ == '__main__':
     puzzleString = sys.argv[1]
     wordLengths  = [int(a) for a in sys.argv[2:]]
 
-    dbFile = 'db/db.txt'
+    dbFile = 'db/db.pickle'
     print "[DEBUG] Loading database", dbFile, "..."
-    trie = Trie(dbFile)
+    trie = Trie(dbFile, True)
     print "[DEBUG] Database loaded"
 
     pending = [( (), Puzzle(puzzleString))]
