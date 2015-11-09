@@ -10,7 +10,7 @@ class Trie:
         self.root = dict()
 
         if filename:
-            with open(dbFile) as db:
+            with open(filename) as db:
                 self.add([word.strip() for word in db])
 
     def add(self, words):
