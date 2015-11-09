@@ -50,7 +50,10 @@ class Puzzle:
         self.valid  = set(i for i, letter in enumerate(self.puzzle) if letter != self.EMPTY)
         self.path   = []
         self.recalcChoices()
+
+        # Lookup Tables
         self.coord  = [(i/self.side,i%self.side) for i in xrange(size)]
+        self.dist   = [[max((abs(ax-bx),abs(ay-by))) for ax, ay in self.coord] for bx, by in self.coord]
 
     def __repr__(self):
         return "\n".join(self.puzzle[i:i+self.side] for i in range(0, self.side**2, self.side))
@@ -58,16 +61,11 @@ class Puzzle:
     def position(self, row, col):
         return row*self.side + col
 
-    def distance(self, p1, p2):
-        c1 = self.coord[p1]
-        c2 = self.coord[p2]
-        return max((abs(c1[0]-c2[0]),abs(c1[1]-c2[1])))
-
     def recalcChoices(self):
         if not self.path:
             self.choices = self.valid.copy()
         else:
-            self.choices = [c for c in self.valid - set(self.path) if self.distance(self.path[-1], c)==1]
+            self.choices = [c for c in self.valid - set(self.path) if self.dist[self.path[-1]][c]==1]
 
     def getPath(self):
         return ("".join(self.puzzle[i] for i in self.path), tuple(self.path), self.applyPath())
